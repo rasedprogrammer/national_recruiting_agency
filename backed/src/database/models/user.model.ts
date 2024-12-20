@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { string } from "zod";
+import { compareValue, hashValue } from "../../common/utils/bcrypt";
 
 interface UserPreferences {
   enable2FA: boolean;
@@ -24,7 +24,7 @@ const UserPreferencesSchema = new Schema<UserPreferences>({
   twoFectorSecrect: { type: Boolean, required: false },
 });
 
-const UserSchema = new Schema<UserDocument>(
+const userSchema = new Schema<UserDocument>(
   {
     name: { type: String, required: true },
     email: {
@@ -47,14 +47,23 @@ const UserSchema = new Schema<UserDocument>(
   }
 );
 
-UserSchema.set("toJSON", {
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await hashValue(this.password);
+  }
+});
+
+userSchema.methods.comparePassword = async function (value: string) {
+  return compareValue(value, this.password);
+};
+
+userSchema.set("toJSON", {
   transform: function (doc, ret) {
     delete ret.password;
-    delete ret.UserPreferences.twoFectorSecrect,
+    delete ret.UserPreferences.twoFectorSecrect;
     return ret;
   },
 });
 
-
-const UserModel = mongoose.model<UserDocument>("User", UserSchema);
+const UserModel = mongoose.model<UserDocument>("User", userSchema);
 export default UserModel;
