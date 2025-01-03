@@ -111,28 +111,28 @@ export class AuthController {
     }
   );
 
-  // public forgotPassword = asyncHandler(
-  //   async (req: Request, res: Response): Promise<any> => {
-  //     const email = emailSchema.parse(req.body.email);
-  //     await this.authService.forgotPassword(email);
+  public forgotPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const email = emailSchema.parse(req.body.email);
+      await this.authService.forgotPassword(email);
 
-  //     return res.status(HTTPSTATUS.OK).json({
-  //       message: "Password reset email sent",
-  //     });
-  //   }
-  // );
+      return res.status(HTTPSTATUS.OK).json({
+        message: "Password reset email sent",
+      });
+    }
+  );
 
-  // public resetPassword = asyncHandler(
-  //   async (req: Request, res: Response): Promise<any> => {
-  //     const body = resetPasswordSchema.parse(req.body);
+  public resetPassword = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const body = resetPasswordSchema.parse(req.body);
 
-  //     await this.authService.resePassword(body);
+      await this.authService.resePassword(body);
 
-  //     return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
-  //       message: "Reset Password successfully",
-  //     });
-  //   }
-  // );
+      return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
+        message: "Reset Password successfully",
+      });
+    }
+  );
 
   // public logout = asyncHandler(
   //   async (req: Request, res: Response): Promise<any> => {
