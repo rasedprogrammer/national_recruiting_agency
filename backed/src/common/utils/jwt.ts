@@ -29,12 +29,13 @@ export const refreshTokenSignOptions: SignOptsAndSecret = {
   expiresIn: config.JWT.REFRESH_EXPIRES_IN,
   secret: config.JWT.REFRESH_SECRET,
 };
+
 export const signJwtToken = (
-  playload: AccessTPayload | RefreshTPayload,
+  payload: AccessTPayload | RefreshTPayload,
   options?: SignOptsAndSecret
 ) => {
   const { secret, ...opts } = options || accessTokenSignOptions;
-  return jwt.sign(playload, secret, {
+  return jwt.sign(payload, secret, {
     ...defaults,
     ...opts,
   });

@@ -1,13 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { VerificationEnum } from "../../common/enums/verification-code.enum";
+import { Schema } from "mongoose";
 import { generateUniqueCode } from "../../common/utils/uuid";
 
 export interface VerificationCodeDocument extends Document {
   userId: mongoose.Types.ObjectId;
   code: string;
   type: VerificationEnum;
-  expiredAt: Date;
-  createAt: Date;
+  expiresAt: Date;
+  createdAt: Date;
 }
 
 const verificationCodeSchema = new Schema<VerificationCodeDocument>({
@@ -27,11 +28,11 @@ const verificationCodeSchema = new Schema<VerificationCodeDocument>({
     type: String,
     required: true,
   },
-  createAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
-  expiredAt: {
+  expiresAt: {
     type: Date,
     required: true,
   },

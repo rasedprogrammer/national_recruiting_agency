@@ -4,7 +4,7 @@ import { compareValue, hashValue } from "../../common/utils/bcrypt";
 interface UserPreferences {
   enable2FA: boolean;
   emailNotification: boolean;
-  twoFectorSecrect?: string;
+  twoFactorSecret?: string;
 }
 
 export interface UserDocument extends Document {
@@ -12,21 +12,23 @@ export interface UserDocument extends Document {
   email: string;
   password: string;
   isEmailVerified: boolean;
-  createdAT: Date;
-  updatedAT: Date;
+  createdAt: Date;
+  updatedAt: Date;
   userPreferences: UserPreferences;
-  comparePassword(value: string): Promise<Boolean>;
+  comparePassword(value: string): Promise<boolean>;
 }
-
-const UserPreferencesSchema = new Schema<UserPreferences>({
+const userPreferencesSchema = new Schema<UserPreferences>({
   enable2FA: { type: Boolean, default: false },
   emailNotification: { type: Boolean, default: true },
-  twoFectorSecrect: { type: Boolean, required: false },
+  twoFactorSecret: { type: String, required: false },
 });
 
 const userSchema = new Schema<UserDocument>(
   {
-    name: { type: String, required: true },
+    name: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       unique: true,
@@ -36,8 +38,12 @@ const userSchema = new Schema<UserDocument>(
       type: String,
       required: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
     userPreferences: {
-      type: UserPreferencesSchema,
+      type: userPreferencesSchema,
       default: {},
     },
   },
@@ -46,7 +52,6 @@ const userSchema = new Schema<UserDocument>(
     toJSON: {},
   }
 );
-
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await hashValue(this.password);
@@ -61,7 +66,7 @@ userSchema.methods.comparePassword = async function (value: string) {
 userSchema.set("toJSON", {
   transform: function (doc, ret) {
     delete ret.password;
-    delete ret.userPreferences.twoFectorSecrect;
+    delete ret.userPreferences.twoFactorSecret;
     return ret;
   },
 });

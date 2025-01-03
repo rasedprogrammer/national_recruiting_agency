@@ -21,6 +21,7 @@ const httpConfig = () => ({
   SERVICE_UNAVAILABLE: 503,
   GATEWAY_TIMEOUT: 504,
 });
+
 export const HTTPSTATUS = httpConfig();
 
 export type HttpStatusCode = (typeof HTTPSTATUS)[keyof typeof HTTPSTATUS];
