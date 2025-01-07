@@ -134,16 +134,16 @@ export class AuthController {
     }
   );
 
-  // public logout = asyncHandler(
-  //   async (req: Request, res: Response): Promise<any> => {
-  //     const sessionId = req.sessionId;
-  //     if (!sessionId) {
-  //       throw new NotFoundException("Session is invalid.");
-  //     }
-  //     await this.authService.logout(sessionId);
-  //     return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
-  //       message: "User logout successfully",
-  //     });
-  //   }
-  // );
+  public logout = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+      const sessionId = req.sessionId;
+      if (!sessionId) {
+        throw new NotFoundException("Session is invalid.");
+      }
+      await this.authService.logout(sessionId);
+      return clearAuthenticationCookies(res).status(HTTPSTATUS.OK).json({
+        message: "User logout successfully",
+      });
+    }
+  );
 }

@@ -310,7 +310,7 @@ export class AuthService {
     };
   }
 
-  // public async logout(sessionId: string) {
-  //   return await SessionModel.findByIdAndDelete(sessionId);
-  // }
+  public async logout(sessionId: string) {
+    return await SessionModel.findByIdAndDelete(sessionId);
+  }
 }
