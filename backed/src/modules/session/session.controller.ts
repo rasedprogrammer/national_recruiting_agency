@@ -12,6 +12,7 @@ export class SessionController {
     this.sessionService = sessionService;
   }
 
+  // Get All Session ID
   public getAllSession = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const sessionId = req.sessionId;
@@ -31,6 +32,7 @@ export class SessionController {
     });
   });
 
+  // Get Single Session ID
   public getSession = asyncHandler(async (req: Request, res: Response) => {
     const sessionId = req?.sessionId;
 
@@ -46,6 +48,7 @@ export class SessionController {
     });
   });
 
+  // Delete Session ID
   public deleteSession = asyncHandler(async (req: Request, res: Response) => {
     const sessionId = z.string().parse(req.params.id);
     const userId = req.user?.id;

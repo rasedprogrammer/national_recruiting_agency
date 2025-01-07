@@ -27,6 +27,7 @@ export class SessionService {
     };
   }
 
+  // Single Session ID
   public async getSessionById(sessionId: string) {
     const session = await SessionModel.findById(sessionId)
       .populate("userId")
@@ -42,6 +43,7 @@ export class SessionService {
     };
   }
 
+  // Session Id Delete
   public async deleteSession(sessionId: string, userId: string) {
     const deletedSession = await SessionModel.findByIdAndDelete({
       _id: sessionId,
