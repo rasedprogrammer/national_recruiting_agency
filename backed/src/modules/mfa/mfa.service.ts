@@ -26,7 +26,8 @@ export class MfaService {
 
     let secretKey = user.userPreferences.twoFactorSecret;
     if (!secretKey) {
-      const secret = speakeasy.generateSecret({ name: "Squeezy" });
+      // You can set you company name here what you want
+      const secret = speakeasy.generateSecret({ name: "National" });
       secretKey = secret.base32;
       user.userPreferences.twoFactorSecret = secretKey;
       await user.save();
@@ -35,7 +36,7 @@ export class MfaService {
     const url = speakeasy.otpauthURL({
       secret: secretKey,
       label: `${user.name}`,
-      issuer: "squeezy.com",
+      issuer: "national.com",
       encoding: "base32",
     });
 
