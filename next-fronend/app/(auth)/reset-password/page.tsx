@@ -1,9 +1,10 @@
 import React, { Suspense } from "react";
-import ConfirmAccount from "./_confirmaccount";
+import ResetPassword from "./_reset-password";
+
 const Page = () => {
   return (
     <Suspense>
-      <ConfirmAccount />
+      <ResetPassword />;
     </Suspense>
   );
 };
