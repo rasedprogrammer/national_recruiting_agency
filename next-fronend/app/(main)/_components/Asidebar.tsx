@@ -80,9 +80,9 @@ const Asidebar = () => {
             {open && (
               <Link
                 href="/home"
-                className="hidden md:flex ml-2 text-xl tracking-[-0.16px] text-black dark:text-[#fcfdffef] font-bold mb-0"
+                className="hidden md:flex ml-2 text-sm tracking-[-0.16px] text-black dark:text-[#fcfdffef] font-bold mb-0"
               >
-                Squeezy
+                National Recruiting Agency
               </Link>
             )}
           </div>

@@ -79,6 +79,61 @@ export class AuthService {
     };
   }
 
+  // public async login(loginData: LoginDto) {
+  //   const { email, password, userAgent } = loginData;
+
+  //   logger.info(`Login attempt for email: ${email}`);
+  //   const user = await UserModel.findOne({ email });
+
+  //   if (!user) {
+  //     logger.warn(`Login failed: User with email ${email} not found`);
+  //     throw new BadRequestException(
+  //       "Invalid email or password provided",
+  //       ErrorCode.AUTH_USER_NOT_FOUND
+  //     );
+  //   }
+
+  //   const isPasswordValid = await user.comparePassword(password);
+  //   if (!isPasswordValid) {
+  //     logger.warn(`Login failed: Invalid password for email: ${email}`);
+  //     throw new BadRequestException(
+  //       "Invalid email or password provided",
+  //       ErrorCode.AUTH_USER_NOT_FOUND
+  //     );
+  //   }
+
+  //   // Check if 2FA is required
+  //   if (user.userPreferences.enable2FA) {
+  //     logger.info(`2FA required for user ID: ${user._id}`);
+  //     return {
+  //       user: null,
+  //       mfaRequired: true,
+  //       accessToken: "",
+  //       refreshToken: "",
+  //     };
+  //   }
+
+  //   logger.info(`Signing tokens for user ID: ${user._id}`);
+  //   const accessToken = signJwtToken({
+  //     userId: user._id,
+  //     sessionId: session._id,
+  //   });
+
+  //   const refreshToken = signJwtToken(
+  //     { sessionId: session._id },
+  //     refreshTokenSignOptions
+  //   );
+
+  //   logger.info(`Login successful for user ID: ${user._id}`);
+  //   return {
+  //     user,
+  //     accessToken,
+  //     refreshToken,
+  //     mfaRequired: false,
+  //     session,
+  //   };
+  // }
+
   public async login(loginData: LoginDto) {
     const { email, password, userAgent } = loginData;
 
@@ -103,6 +158,22 @@ export class AuthService {
         ErrorCode.AUTH_USER_NOT_FOUND
       );
     }
+    try {
+      const session = await SessionModel.create({
+        userId: user._id,
+        userAgent,
+      });
+      logger.info("Session created successfully:", session);
+    } catch (error) {
+      logger.error("Error creating session:", error);
+    }
+
+    // logger.info(`Creating session for user ID: ${user._id}`);
+    // const session = await SessionModel.create({
+    //   userId: user._id,
+    //   userAgent,
+    // });
+    // logger.info("Session created:", session);
 
     // Check if the user enable 2fa retuen user= null
     if (user.userPreferences.enable2FA) {
@@ -115,11 +186,35 @@ export class AuthService {
       };
     }
 
-    logger.info(`Creating session for user ID: ${user._id}`);
-    const session = await SessionModel.create({
-      userId: user._id,
-      userAgent,
-    });
+    // Declare `session` before the try block
+    let session;
+
+    try {
+      session = await SessionModel.create({
+        userId: user._id,
+        userAgent,
+      });
+      logger.info("Session created successfully:", session);
+    } catch (error) {
+      logger.error("Error creating session:", error);
+      throw new InternalServerException("Failed to create session");
+    }
+
+    // Ensure session is created before proceeding
+    if (!session) {
+      throw new InternalServerException("Session creation failed");
+    }
+
+    // logger.info("Passed Before The Session Creation");
+    // logger.info(`Creating session for user ID: ${user._id}`);
+
+    // logger.info(`Creating session for user ID: ${user._id}`);
+    // const session = await SessionModel.create({
+    //   userId: user._id,
+    //   userAgent,
+    // });
+    // logger.info("Passed Before The Session Creation");
+    // logger.info(session);
 
     logger.info(`Signing tokens for user ID: ${user._id}`);
     const accessToken = signJwtToken({
@@ -140,6 +235,7 @@ export class AuthService {
       accessToken,
       refreshToken,
       mfaRequired: false,
+      session,
     };
   }
 

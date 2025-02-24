@@ -8,13 +8,23 @@ const options = {
 
 const API = axios.create(options);
 
+export const APIRefresh = axios.create(options);
+APIRefresh.interceptors.response.use((response) => response);
+
 API.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  async (error) => {
     const { data, status } = error.response;
-    if (data === "Unauthorized" && status === 401) {
+    console.log(data, "data");
+    if (data.errorCode === "AUTH_TOKEN_NOT_FOUND" && status === 401) {
+      try {
+        await APIRefresh.get("/auth/refresh");
+        return APIRefresh(error.config);
+      } catch (error) {
+        window.location.href = "/";
+      }
     }
     return Promise.reject({
       ...data,
